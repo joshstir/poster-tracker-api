@@ -46,6 +46,8 @@ poster-tracker-api/
 ├── README.md                    # Main documentation
 ├── API_DOCUMENTATION.md         # API reference
 ├── AZURE_DEPLOYMENT.md          # Azure deployment guide
+├── ELASTICSEARCH_LOGGING.md     # Elasticsearch logging guide
+├── MIGRATION_GUIDE.md           # Database migration guide
 └── PROJECT_STRUCTURE.md         # This file
 ```
 
@@ -161,6 +163,8 @@ Main application file:
 - **README.md**: Project overview, setup, and basic usage
 - **API_DOCUMENTATION.md**: Complete API reference
 - **AZURE_DEPLOYMENT.md**: Step-by-step Azure deployment guide
+- **ELASTICSEARCH_LOGGING.md**: Elasticsearch logging setup and configuration
+- **MIGRATION_GUIDE.md**: Database migrations and Prisma guide
 - **PROJECT_STRUCTURE.md**: This file
 
 ## Data Flow

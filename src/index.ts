@@ -1,12 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import morgan from 'morgan';
 import dotenv from 'dotenv';
 import posterRoutes from './routes/poster.routes';
 import playlistRoutes from './routes/playlist.routes';
 import tagRoutes from './routes/tag.routes';
 import { errorHandler } from './middleware/errorHandler';
+import { requestLogger, errorLogger } from './middleware/requestLogger';
+import { logger } from './config/logger';
 
 // Load environment variables
 dotenv.config();
@@ -17,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(helmet());
 app.use(cors());
-app.use(morgan('combined'));
+app.use(requestLogger); // Custom request logger with Elasticsearch support
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -40,22 +41,28 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
+// Error logging middleware (log errors before handling)
+app.use(errorLogger);
+
 // Error handler
 app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  logger.info('Server started', {
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development',
+    nodeVersion: process.version,
+  });
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received: closing HTTP server');
+  logger.info('SIGTERM signal received: closing HTTP server');
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  console.log('SIGINT signal received: closing HTTP server');
+  logger.info('SIGINT signal received: closing HTTP server');
   process.exit(0);
 });

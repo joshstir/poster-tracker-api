@@ -10,6 +10,7 @@ A RESTful API for managing movie posters, playlists, and tags. Built for Azure d
 - **Tag System**: Predefined tags + user-defined custom tags
 - **Search**: Search posters by title, year, and tags
 - **Cloud Storage**: Azure Blob Storage for poster images
+- **Centralized Logging**: Elasticsearch integration for structured logging and monitoring
 - **Containerized**: Docker support for easy deployment to Azure Container Instances
 
 ## Tech Stack
@@ -20,6 +21,7 @@ A RESTful API for managing movie posters, playlists, and tags. Built for Azure d
 - **ORM**: Prisma
 - **Authentication**: Azure AD / Entra ID (JWT)
 - **Storage**: Azure Blob Storage
+- **Logging**: Winston with Elasticsearch transport
 - **Containerization**: Docker
 
 ## Prerequisites
@@ -333,6 +335,19 @@ npm run prisma:studio    # Open Prisma Studio (GUI)
 7. **CORS**: Configure allowed origins in production
 
 ## Monitoring and Logs
+
+### Centralized Logging with Elasticsearch
+
+The API includes built-in Elasticsearch integration for structured logging:
+
+- Request/response logging with timing
+- Error tracking with stack traces
+- User activity monitoring
+- Slow request detection
+
+See **[ELASTICSEARCH_LOGGING.md](ELASTICSEARCH_LOGGING.md)** for complete setup guide.
+
+### Container Logs
 
 View container logs in Azure:
 

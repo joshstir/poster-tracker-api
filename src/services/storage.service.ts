@@ -1,5 +1,6 @@
 import { BlobServiceClient, ContainerClient } from '@azure/storage-blob';
 import { v4 as uuidv4 } from 'uuid';
+import { logger } from '../config/logger';
 
 class StorageService {
   private containerClient: ContainerClient | null = null;
@@ -15,14 +16,17 @@ class StorageService {
       const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
 
       if (!connectionString) {
-        console.warn('Azure Storage connection string not configured. Image upload will be disabled.');
+        logger.warn('Azure Storage connection string not configured. Image upload will be disabled.');
         return;
       }
 
       const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
       this.containerClient = blobServiceClient.getContainerClient(this.containerName);
+      logger.info('Azure Blob Storage client initialized', {
+        containerName: this.containerName
+      });
     } catch (error) {
-      console.error('Failed to initialize Azure Blob Storage client:', error);
+      logger.error('Failed to initialize Azure Blob Storage client', { error });
     }
   }
 
@@ -36,7 +40,7 @@ class StorageService {
         access: 'blob', // Public read access for images
       });
     } catch (error) {
-      console.error('Failed to create container:', error);
+      logger.error('Failed to create container', { error });
       throw error;
     }
   }
@@ -64,6 +68,13 @@ class StorageService {
       },
     });
 
+    logger.info('Image uploaded successfully', {
+      userId,
+      blobName,
+      fileSize: file.size,
+      mimeType: file.mimetype,
+    });
+
     // Return the URL
     return blockBlobClient.url;
   }
@@ -81,8 +92,10 @@ class StorageService {
 
       const blockBlobClient = this.containerClient.getBlockBlobClient(blobName);
       await blockBlobClient.deleteIfExists();
+
+      logger.info('Image deleted successfully', { blobName });
     } catch (error) {
-      console.error('Failed to delete image:', error);
+      logger.error('Failed to delete image', { error, imageUrl });
       // Don't throw - allow deletion to continue even if image doesn't exist
     }
   }
